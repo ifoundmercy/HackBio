@@ -1,0 +1,100 @@
+codon_db <- c("UUU"="Phe", "UUC"="Phe","UUA"="Leu", "UUC"="Leu")
+
+test_cd <- "UUAUUAUUAUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUCUUCUUCUUCUUC"
+
+translator <- function(inputCodon){
+    
+    split_seq <- strsplit(inputCodon, "")[[1]]
+    #print(split_seq)
+    codon_positions <- seq(1, length(split_seq), 3)
+
+    ribosome_output <- c()
+
+    for(i in codon_positions){
+        curr_nuc <- split_seq[i:(i+2)]
+        curr_nuc <- paste0(curr_nuc[1], curr_nuc[2], curr_nuc[3])
+        #print(curr_nuc)
+        ribosome_output <- c(ribosome_output, codon_db[curr_nuc])
+    }
+
+    return(ribosome_output)
+}
+
+translator(test_cd)
+
+#start coding... 
+
+population_maker <- function(k = 2, x_mid = 5, x){
+
+    solution <- 1/(1 + exp(-k*(x - x_mid)))
+
+    return(solution)
+}
+
+od_600 <- c()
+
+for(i in 0:24){
+    curr_od <- population_maker(k =0.25, x_mid = 10, x = i)
+    od_600 <- c(od_600, curr_od)
+}
+
+#print(length(od_600))
+#print(length(0:24))
+
+plot(x = 0:24, y = od_600)
+
+#start coding... 
+# Sigmoid function for growth curve
+population_maker <- function(k = 2, x_mid = 5, x) {
+  1 / (1 + exp(-k * (x - x_mid)))
+}
+
+# 1. Generate 100 different growth curves
+set.seed(42)  # For reproducibility
+num_curves <- 100
+time_points <- 0:24
+
+# Create a dataframe to store the results
+growth_data <- data.frame()
+
+for (i in 1:num_curves) {
+  k_val <- runif(1, 0.2, 1)       # Random k between 0.2 and 1
+  x_mid_val <- runif(1, 5, 15)     # Random x_mid between 5 and 15
+  od_values <- population_maker(k = k_val, x_mid = x_mid_val, x = time_points)
+  
+  temp_df <- data.frame(time = time_points, growth_curve_id = i, OD600 = od_values)
+  growth_data <- rbind(growth_data, temp_df)
+}
+
+# View first few rows
+head(growth_data)
+
+
+# 2. Function to find time when OD600 reaches 80% of carrying capacity
+time_to_80 <- function(k, x_mid) {
+  od_threshold <- 0.8  # 80% of carrying capacity
+  time_points <- 0:24
+  od_values <- population_maker(k, x_mid, time_points)
+  
+  # Find first time point where OD600 >= 0.8
+  time_reach_80 <- min(time_points[od_values >= od_threshold])
+  return(time_reach_80)
+}
+
+# Example usage
+time_to_80(k = 0.5, x_mid = 10)
+
+
+# 3. Hamming Distance Function
+hamming_distance <- function(str1, str2) {
+  # Ensure both strings have the same length by padding with spaces
+  max_length <- max(nchar(str1), nchar(str2))
+  str1 <- sprintf(paste0("%-", max_length, "s"), str1)
+  str2 <- sprintf(paste0("%-", max_length, "s"), str2)
+  
+  # Count character differences
+  sum(strsplit(str1, NULL)[[1]] != strsplit(str2, NULL)[[1]])
+}
+
+# Example usage with synthesized usernames
+hamming_distance("Ayitikola", "Stephobia1")
